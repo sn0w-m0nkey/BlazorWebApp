@@ -1,0 +1,39 @@
+name: delete artifacts
+
+on:
+  workflow_dispatch:
+
+jobs:
+  delete-artifacts:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the repository (required for GitHub CLI actions)
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Install GitHub CLI
+      - name: Install GitHub CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y gh
+
+      # Authenticate GitHub CLI
+      - name: Authenticate with GitHub CLI
+        env:
+          GH_TOKEN: ${{ secrets.DELETE_ARTIFACTS_TOKEN }}
+        run: |
+          echo "${GH_TOKEN}" | gh auth login --with-token
+
+      # Delete all artifacts
+      - name: Delete All Artifacts
+        env:
+          REPO: ${{ github.repository }}
+        run: |
+          echo "Fetching artifacts for repository $REPO..."
+          gh api -X GET "repos/$REPO/actions/artifacts" --paginate \
+            | jq -r '.artifacts[] | .id' \
+            | while read -r artifact_id; do
+                echo "Deleting artifact $artifact_id..."
+                gh api -X DELETE "repos/$REPO/actions/artifacts/$artifact_id"
+              done
