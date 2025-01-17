@@ -3,9 +3,9 @@
 name: deploy
 
 on:
-  push:
-    branches:
-      - master
+#  push:
+#    branches:
+#      - master
   workflow_dispatch:
 
 jobs:
@@ -127,16 +127,11 @@ jobs:
       - name: List Files
         run: |
           dir
-          
-#      - name: List Files 2 layers deep
-#        run: |
-#          ls -d * */*
       
       # Use SQL Migration Script
 #      - name: Run SQL migration script
 #        run: |
           
-      
       # Run migrations using benday-inc          
 #      - name: deploy entity framework core migrations
 #        uses: benday-inc/deploy-ef-core-migration@main
@@ -170,13 +165,6 @@ jobs:
           echo client-id: ${{ secrets.AZURE_CLIENT_ID }}
           echo tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           echo subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          
-      - name: Log into Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_6A12B91D578940E884F2A36E2B5A683B }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_186C955E562E4E42A7D8573DD8D888E4 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_AFA4DF04F133423B8083FDE2E5BCD567 }}
           
       - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v2
@@ -212,7 +200,7 @@ jobs:
 #        run: |
 #          ls *
 
-#      - name: List Files 2 layers deep
+#      - name: List Files 2 layers deep (linux)
 #        run: |
 #          ls -d * */*
           
