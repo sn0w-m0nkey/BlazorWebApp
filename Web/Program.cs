@@ -13,23 +13,17 @@ builder.Services
     .ConfigureAuthentication(builder.Configuration)
     .RegisterWebComponents(builder.Configuration);
 
-builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
-
 var app = builder.Build();
-
-// Ensure database and tables exist
-// TODO: Make this conditional based on input --RunMigrations
-// https://medium.com/geekculture/ways-to-run-entity-framework-migrations-in-asp-net-core-6-37719993ddcb
-{
-    using var scope = app.Services.CreateScope();
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    //await context.Database.MigrateAsync();
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
+    
+    // Ensure database is up to date
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    await context.Database.MigrateAsync();
 }
 else
 {
@@ -39,7 +33,6 @@ else
 }
 
 app.UseHttpsRedirection();
-
 
 app.UseAntiforgery();
 
